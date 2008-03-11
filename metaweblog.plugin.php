@@ -18,11 +18,12 @@ class metaWeblog extends Plugin
 	}
 	
 	public function filter_rsd_api_list( $list ) {
-		$list['metaWeblog']= array(
-		 'preferred' => 'false',
+		$list['MetaWeblog']= array(
+		 'preferred' => 'true',
 		 'apiLink' => URL::get( 'xmlrpc' ),
-		 'blogID' => '',
+		 'blogID' => '1',
 		 );
+		$list['Atom']['preferred']= 'false';
 		return $list;
 	}
 	
