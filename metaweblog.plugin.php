@@ -7,7 +7,7 @@ class metaWeblog extends Plugin
 	public function info() {
 		return array(
 			'name' => 'metaWeblog',
-			'version' => '0.8.3',
+			'version' => '0.8.4',
 			'url' => 'http://habariproject.org/',
 			'author' =>	'Habari Community',
 			'authorurl' => 'http://habariproject.org/',
@@ -59,8 +59,8 @@ class metaWeblog extends Plugin
 		$struct= new XMLRPCStruct();
 
 		$struct->dateCreated= date( 'c', strtotime( $post->pubdate ) );
-		$struct->description= $post->content_out;
-		$struct->title= $post->title_out;
+		$struct->description= $post->content;
+		$struct->title= $post->title;
 		$struct->link= $post->permalink;
 		$struct->categories= $post->tags;
 		$struct->permalink= $post->permalink;
@@ -81,8 +81,8 @@ class metaWeblog extends Plugin
 		foreach ( $posts as $post ) {
 			$struct= new XMLRPCStruct();
 			$struct->dateCreated= date( 'c', strtotime( $post->pubdate ) );
-			$struct->description= $post->content_out;
-			$struct->title= $post->title_out;
+			$struct->description= $post->content;
+			$struct->title= $post->title;
 			$struct->link= $post->permalink;
 			$struct->categories= $post->tags;
 			$struct->permalink= $post->permalink;
