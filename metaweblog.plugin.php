@@ -7,7 +7,7 @@ class metaWeblog extends Plugin
 	public function info() {
 		return array(
 			'name' => 'metaWeblog',
-			'version' => '0.8.4',
+			'version' => '0.8.5',
 			'url' => 'http://habariproject.org/',
 			'author' =>	'Habari Community',
 			'authorurl' => 'http://habariproject.org/',
@@ -57,8 +57,7 @@ class metaWeblog extends Plugin
 		$post = Posts::get( array( 'id' => $params[0], 'limit' => 1 ) );
 		$post = $post[0];
 		$struct = new XMLRPCStruct();
-
-		$struct->dateCreated = date( 'c', strtotime( $post->pubdate ) );
+		$struct->dateCreated = new XMLRPCDate($post->pubdate->int);
 		$struct->description = $post->content;
 		$struct->title = $post->title;
 		$struct->link = $post->permalink;
@@ -80,7 +79,7 @@ class metaWeblog extends Plugin
 
 		foreach ( $posts as $post ) {
 			$struct = new XMLRPCStruct();
-			$struct->dateCreated = date( 'c', strtotime( $post->pubdate ) );
+			$struct->dateCreated = new XMLRPCDate($post->pubdate->int);
 			$struct->description = $post->content;
 			$struct->title = $post->title;
 			$struct->link = $post->permalink;
@@ -136,7 +135,7 @@ class metaWeblog extends Plugin
 			$post->content = $params[3]->description;
 			$post->content_type = Post::type('entry');
 			$post->status = ( $params[4] ) ? Post::status('published') : Post::status('draft');
-			$post->updated = date( 'Y-m-d H:i:s' );
+			$post->updated = HabariDateTime::date_create();
 			$post->update();
 			return true;
 		}
@@ -154,7 +153,7 @@ class metaWeblog extends Plugin
 			'title' => $params[3]->title,
 			'content' => $params[3]->description,
 			'user_id' => User::identify()->id,
-			'pubdate' => date( 'Y-m-d H:i:s' ),
+			'pubdate' => HabariDateTime::date_create(),
 			'status' => ( $params[4] ) ? Post::status('published') : Post::status('draft'),
 			'content_type' => Post::type('entry'),
 		);
