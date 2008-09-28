@@ -43,7 +43,9 @@ class metaWeblog extends Plugin
 			case 809:
 				return _t( 'File is too large (max. upload filesize)' );
 			case 810:
-				return _t( 'Other error on newMediaObject' );
+				return _t( 'Cannot open file' );
+			case 811:
+				return _t( 'Cannot write to file' );
 			default:
 				return $default;
 		}
@@ -295,11 +297,20 @@ class metaWeblog extends Plugin
 			}
 		} while (file_exists($filename));
 		
-		if ( !file_put_contents(rtrim($this->upload_dir,'\/') . '/' . $filename_new, base64_decode($params[3]->bits), LOCK_EX) ) {
-			$exception = new XMLRPCException(810);
-			$exception->output_fault_xml();
-		}
+		$filepath = rtrim($this->upload_dir,'\/') . '/' . $filename;
 		
+	    if (!$handle = fopen($filepath, 'wb')) {
+			 $exception = new XMLRPCException(810, _t( sprintf("Cannot open file (%s)", $filepath) ) );
+			 $exception->output_fault_xml();
+	    }
+
+	    if (fwrite($handle, base64_decode($params[3]->bits)) === FALSE) {
+			$exception = new XMLRPCException(811);
+			$exception->output_fault_xml();
+	    }
+
+	    fclose($handle);
+	
 		$struct = new XMLRPCStruct();
 		$struct->url = rtrim($this->upload_url,'\/') . '/' . $filename;
 		
