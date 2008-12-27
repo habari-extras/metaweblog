@@ -184,10 +184,10 @@ class metaWeblog extends Plugin
 		foreach ( (array) $posts as $post) {
 			$struct = new XMLRPCStruct();
 			$struct->dateCreated = new XMLRPCDate($post->pubdate->int);
-			$struct->description = htmlspecialchars( $post->content, ENT_COMPAT, 'UTF-8', FALSE );
-			$struct->title = htmlspecialchars( $post->title, ENT_COMPAT, 'UTF-8', FALSE );
+			$struct->description = htmlspecialchars( $post->content, ENT_COMPAT, 'UTF-8' );
+			$struct->title = htmlspecialchars( $post->title, ENT_COMPAT, 'UTF-8' );
 			$struct->link = $post->permalink;
-			$struct->categories = htmlspecialchars( $post->tags, ENT_COMPAT, 'UTF-8', FALSE );
+			$struct->categories = $post->tags;
 			$struct->permalink = $post->permalink;
 			$struct->postid = $post->id;
 			$struct->userid = $post->author->id;
