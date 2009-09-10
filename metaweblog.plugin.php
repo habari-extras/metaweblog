@@ -4,19 +4,6 @@ class metaWeblog extends Plugin
 
 	private $user = NULL;
 
-	public function info() {
-		return array(
-			'name' => 'metaWeblog',
-			'version' => '1.0',
-			'url' => 'http://habariproject.org/',
-			'author' =>	'Habari Community',
-			'authorurl' => 'http://habariproject.org/',
-			'license' => 'Apache License 2.0',
-			'description' => 'Adds support metaWeblog methods to the XML-RPC server.',
-			'copyright' => '2007'
-		);
-	}
-	
 	public function action_plugin_activation( $file ) {
 		if( Plugins::id_from_file($file) == Plugins::id_from_file(__FILE__) ) {
 			// Let's make sure we at least have the default paths set
