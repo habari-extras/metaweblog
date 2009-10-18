@@ -1,7 +1,6 @@
 <?php
 class metaWeblog extends Plugin
 {
-
 	private $user = NULL;
 
 	public function action_plugin_activation( $file ) {
