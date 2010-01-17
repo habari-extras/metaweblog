@@ -220,7 +220,7 @@ class metaWeblog extends Plugin
 		$user = $this->is_auth( $params[1], $params[2] );
 
 		// Fetch all tags from the database
-		$tags = DB::get_results( 'SELECT * FROM ' . DB::table( 'tags' ) );
+		$tags = Tags::get();
 		
 		// Create a new array struct for tags
 		$structCollection = array();
