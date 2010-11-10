@@ -170,8 +170,8 @@ class metaWeblog extends Plugin
 		foreach ( (array) $posts as $post) {
 			$struct = new XMLRPCStruct();
 			$struct->dateCreated = new XMLRPCDate($post->pubdate->int);
-			$struct->description = htmlspecialchars( $post->content, ENT_COMPAT, 'UTF-8' );
-			$struct->title = htmlspecialchars( $post->title, ENT_COMPAT, 'UTF-8' );
+			$struct->description = Utils::htmlspecialchars( $post->content );
+			$struct->title = Utils::htmlspecialchars( $post->title );
 			$struct->link = $post->permalink;
 			$struct->categories = $post->tags;
 			$struct->permalink = $post->permalink;
@@ -220,16 +220,16 @@ class metaWeblog extends Plugin
 		$user = $this->is_auth( $params[1], $params[2] );
 
 		// Fetch all tags from the database
-		$tags = Tags::get();
+		$tags = Tags::vocabulary()->get_tree( 'term_display ASC' );
 		
 		// Create a new array struct for tags
 		$structCollection = array();
 		foreach ( $tags as $tag ) {
 			$struct = new XMLRPCStruct();
-			$struct->description = $tag->tag_text;
-			$struct->htmlUrl = URL::get( 'atom_feed_tag', array( 'tag' => $tag->tag_slug ) );
-			$struct->rssUrl = URL::get( 'display_entries_by_tag', array( 'tag' => $tag->tag_slug ) );
-			$struct->title = $tag->tag_text;
+			$struct->description = $tag->term_display;
+			$struct->htmlUrl = URL::get( 'atom_feed_tag', array( 'tag' => $tag->term ) );
+			$struct->rssUrl = URL::get( 'display_entries_by_tag', array( 'tag' => $tag->term ) );
+			$struct->title = $tag->term_display;
 			$struct->categoryid = $tag->id;
 			$structCollection[]= $struct;
 		}
