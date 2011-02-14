@@ -231,7 +231,7 @@ class metaWeblog extends Plugin
 			$struct->rssUrl = URL::get( 'display_entries_by_tag', array( 'tag' => $tag->term ) );
 			$struct->title = $tag->term_display;
 			$struct->categoryid = $tag->id;
-			$structCollection[]= $struct;
+			$structCollection[] = $struct;
 		}
 
 		return $structCollection;

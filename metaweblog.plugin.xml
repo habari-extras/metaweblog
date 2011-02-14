@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <pluggable type="plugin">
 	<name>metaWeblog</name>
-	<license url="http://www.apache.org/licenses/LICENSE-2.0.html">Apache
-	Software License 2.0</license>
+	<license url="http://www.apache.org/licenses/LICENSE-2.0.html">Apache Software License 2.0</license>
 	<author url="http://habariproject.org/">The Habari Community</author>
-	<version>1.0</version>
+	<version>1.1</version>
 	<url>http://habariproject.org/</url>
+	<guid>D77FE5CC-3782-11E0-B76D-3738E0D7208</guid>
 	<description><![CDATA[Adds metaWeblog support to the XML-RPC server.]]></description>
 	<copyright>2007</copyright>
 </pluggable>
