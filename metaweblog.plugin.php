@@ -1,11 +1,11 @@
 <?php
 class metaWeblog extends Plugin
 {
-	private $user = NULL;
+	private $user = null;
 
 	public function action_plugin_activation( $file )
 	{
-		if( Plugins::id_from_file($file) == Plugins::id_from_file(__FILE__) ) {
+		if ( realpath( $file ) == __FILE__ ) {
 			// Let's make sure we at least have the default paths set
 			$this->default_paths();
 			
@@ -107,40 +107,35 @@ class metaWeblog extends Plugin
 	public function filter_plugin_config( $actions, $plugin_id )
 	{
 		if ($plugin_id == $this->plugin_id()){
-			$actions[] = _t( 'Configure' );
-			$actions[] = _t( 'Reset Configuration' );
+			$actions['configure'] = _t( 'Configure' );
+			$actions['reset_configuration'] = _t( 'Reset Configuration' );
 		}
 
 		return $actions;
 	}
 
-	public function action_plugin_ui( $plugin_id, $action )
+	public function action_plugin_ui_reset_configuration( $plugin_id, $action )
 	{
-		if ($plugin_id == $this->plugin_id() ) {
-			switch ( $action )
-			{
-				case 'Reset Configuration':
-					// Force the reset of default paths to Habari media silo's
-					$this->default_paths( true );
-					echo _t( "Upload directory has been set to use Habari Media Silo's." );
-					break;
-				case 'Configure' :
-					$ui = new FormUI( strtolower( get_class( $this ) ) );
-					$upload_dir = $ui->append( 'text', 'metaweblog_upload_dir', 'option:metaweblog__upload_dir', _t( 'Directory to use when uploading new media:' ) );
-					
-					// Make sure upload_dir is an existing directory, otherwise try creating it
-					$upload_dir->add_validator( array( $this, 'validate_upload_dir' ) );
-					
-					$ui->append( 'text', 'metaweblog_upload_url', 'option:metaweblog__upload_url', _t( 'URL to upload directory:' ) );
-					$ui->append( 'checkbox', 'metaweblog_preferred', 'option:metaweblog__preferred', _t( 'Prefer metaWeblog to other APIs, making it auto-detectable. Otherwise, manually select metaWeblog as API in your editor.' ) );
-					$ui->append( 'submit', 'save', _t( 'Save' ) );
-					$ui->set_option( 'success_message', _t( 'Options saved' ) );
-					$ui->out();
-					break;
-			}
-		}
+		// Force the reset of default paths to Habari media silo's
+		$this->default_paths( true );
+		Session::notice( _t( "Upload directory has been set to use Habari Media Silo's." ) );
 	}
-	
+
+	public function action_plugin_ui_configure( $plugin_id, $action )
+	{
+		$ui = new FormUI( strtolower( get_class( $this ) ) );
+		$upload_dir = $ui->append( 'text', 'metaweblog_upload_dir', 'option:metaweblog__upload_dir', _t( 'Directory to use when uploading new media:' ) );
+
+		// Make sure upload_dir is an existing directory, otherwise try creating it
+		$upload_dir->add_validator( array( $this, 'validate_upload_dir' ) );
+
+		$ui->append( 'text', 'metaweblog_upload_url', 'option:metaweblog__upload_url', _t( 'URL to upload directory:' ) );
+		$ui->append( 'checkbox', 'metaweblog_preferred', 'option:metaweblog__preferred', _t( 'Prefer metaWeblog to other APIs, making it auto-detectable. Otherwise, manually select metaWeblog as API in your editor.' ) );
+		$ui->append( 'submit', 'save', _t( 'Save' ) );
+		$ui->set_option( 'success_message', _t( 'Options saved' ) );
+		$ui->out();
+	}
+
 	public function filter_rsd_api_list( $list )
 	{
 		$list['metaWeblog'] = array(
@@ -158,9 +153,9 @@ class metaWeblog extends Plugin
 		return $list;
 	}
 	
-	private function is_auth( $username, $password, $force = FALSE )
+	private function is_auth( $username, $password, $force = false )
 	{
-		if ( ( $this->user == $username ) && ( $force != TRUE ) ) {
+		if ( ( $this->user == $username ) && ( $force != true ) ) {
 			// User is already authenticated
 			return $this->user;
 		}
@@ -322,7 +317,7 @@ class metaWeblog extends Plugin
 
 		// Received media is encoded in base64
 		// Since Habari doesn't decode base64 automatically we need to do it
-	    if ( fwrite( $handle, base64_decode( $params[3]->bits ) ) === FALSE ) {
+	    if ( fwrite( $handle, base64_decode( $params[3]->bits ) ) === false ) {
 			$exception = new XMLRPCException(811);
 			$exception->output_fault_xml();
 	    }
