@@ -1,11 +1,11 @@
 <?php
 class metaWeblog extends Plugin
 {
-	private $user = null;
+	private $user = NULL;
 
 	public function action_plugin_activation( $file )
 	{
-		if ( realpath( $file ) == __FILE__ ) {
+		if( realpath( $file ) == __FILE__ ) {
 			// Let's make sure we at least have the default paths set
 			$this->default_paths();
 			
@@ -16,7 +16,7 @@ class metaWeblog extends Plugin
 		}
 	}
 	
-	private function default_paths( $force = false )
+	private function default_paths($force= false)
 	{
 		// If either the upload directory or the upload URL is empty, fallback to the defaults
 		// This behavior can also be forced when needed (for example, resetting the configuration)
@@ -44,8 +44,7 @@ class metaWeblog extends Plugin
 				// We have permissions, create the directory and chmod properly
 				// If $fake is true, we don't create the directory but return true because we have permissions
 				return ( $fake ) ? true : mkdir( $upload_dir, 0755 );
-			}
-			else {
+			} else {
 				// We do not have permissions
 				return false;
 			}
@@ -69,8 +68,7 @@ class metaWeblog extends Plugin
 	public function filter_xmlrpcexception_get_message( $default, $code )
 	{
 		// In the future, use a class variable to store more info for error messages, $this->last_error
-		switch ( $code )
-		{
+		switch ( $code ) {
 			case 801:
 				return _t( 'Login Error (probably bad username/password combination)' );
 			case 802:
@@ -106,25 +104,17 @@ class metaWeblog extends Plugin
 	
 	public function filter_plugin_config( $actions, $plugin_id )
 	{
-		if ($plugin_id == $this->plugin_id()){
-			$actions['configure'] = _t( 'Configure' );
-			$actions['reset_configuration'] = _t( 'Reset Configuration' );
+		if ( $plugin_id == $this->plugin_id() ) {
+			$actions['reset'] = _t( 'Reset Configuration' );
 		}
 
 		return $actions;
 	}
 
-	public function action_plugin_ui_reset_configuration( $plugin_id, $action )
-	{
-		// Force the reset of default paths to Habari media silo's
-		$this->default_paths( true );
-		Session::notice( _t( "Upload directory has been set to use Habari Media Silo's." ) );
-	}
-
-	public function action_plugin_ui_configure( $plugin_id, $action )
+	public function configure()
 	{
 		$ui = new FormUI( strtolower( get_class( $this ) ) );
-		$upload_dir = $ui->append( 'text', 'metaweblog_upload_dir', 'option:metaweblog__upload_dir', _t( 'Directory to use when uploading new media:' ) );
+		$upload_dir= $ui->append( 'text', 'metaweblog_upload_dir', 'option:metaweblog__upload_dir', _t( 'Directory to use when uploading new media:' ) );
 
 		// Make sure upload_dir is an existing directory, otherwise try creating it
 		$upload_dir->add_validator( array( $this, 'validate_upload_dir' ) );
@@ -136,6 +126,13 @@ class metaWeblog extends Plugin
 		$ui->out();
 	}
 
+	public function action_plugin_ui_reset( $plugin_id, $action )
+	{
+		// Force the reset of default paths to Habari media silo's
+		$this->default_paths( true );
+		echo _t( "Upload directory has been set to use Habari Media Silo's." );
+	}
+	
 	public function filter_rsd_api_list( $list )
 	{
 		$list['metaWeblog'] = array(
@@ -153,9 +150,9 @@ class metaWeblog extends Plugin
 		return $list;
 	}
 	
-	private function is_auth( $username, $password, $force = false )
+	private function is_auth( $username, $password, $force = FALSE )
 	{
-		if ( ( $this->user == $username ) && ( $force != true ) ) {
+		if ( ( $this->user == $username ) && ( $force != TRUE ) ) {
 			// User is already authenticated
 			return $this->user;
 		}
@@ -188,7 +185,7 @@ class metaWeblog extends Plugin
 			$struct->mt_allow_comments = ( isset( $post->info->comments_disabled ) ) ? 0 : 1;
 			$struct->mt_allow_pings = 1;
 			
-			$collection[]= $struct;
+			$collection[] = $struct;
 		}
 		
 		// Do not send an array struct for getPost, clients don't expect it
@@ -201,7 +198,7 @@ class metaWeblog extends Plugin
 		$user = $this->is_auth( $params[1], $params[2] );
 
 		// Retrieve the posts
-		$posts = Posts::get( array( 'limit' => $params[3], 'status' => Post::status('published') ) );
+		$posts = Posts::get( array( 'limit' => $params[3], 'status' => 'published' ) );
 
 		return $this->add_posts( $posts );
 	}
@@ -260,11 +257,11 @@ class metaWeblog extends Plugin
 			'user_id' => User::identify()->id,
 			'pubdate' => HabariDateTime::date_create(),
 			'status' => ( $params[4] ) ? Post::status( 'published' ) : Post::status( 'draft' ),
-			'content_type' => Post::type('entry'),
+			'content_type' => Post::type( 'entry' ),
 		);
 		
-		if ( isset($params[3]->categories) ) { 
-			$postdata['tags']= implode( ',', $params[3]->categories );
+		if ( isset( $params[3]->categories ) ) {
+			$postdata['tags'] = implode( ',', $params[3]->categories );
 		}
 		
 		if ( $post = Post::create( $postdata ) ) {
@@ -290,15 +287,15 @@ class metaWeblog extends Plugin
 		$user = $this->is_auth( $params[1], $params[2] );
 		
 		// Required upload directory and url
-		$upload_dir = Options::get('metaweblog__upload_dir');
-		$upload_url = Options::get('metaweblog__upload_url');
+		$upload_dir = Options::get( 'metaweblog__upload_dir' );
+		$upload_url = Options::get( 'metaweblog__upload_url' );
 		
 		// Lowercase file name with extension
 		$name = strtolower( basename( $params[3]->name ) );
 		
 		// Generate a first filename to use, it should be unique, otherwise wait a second then try again
 		do {
-			if( $dot = strrpos( $name, '.' ) ) {
+			if ($dot = strrpos( $name, '.' )) {
 				$filename = substr_replace( $name, '_' . date( 'omdhis' ), $dot, 0 );
 			}
 			else {
@@ -310,7 +307,7 @@ class metaWeblog extends Plugin
 		$filepath = rtrim( $upload_dir,'\/' ) . '/' . $filename;
 		
 		// Create a file handle in binary write-only for the uploaded media
-	    if ( !$handle = fopen( $filepath, 'wb' ) ) {
+	    if (!$handle = fopen( $filepath, 'wb' ) ) {
 			 $exception = new XMLRPCException( 810 );
 			 $exception->output_fault_xml();
 	    }
@@ -318,7 +315,7 @@ class metaWeblog extends Plugin
 		// Received media is encoded in base64
 		// Since Habari doesn't decode base64 automatically we need to do it
 	    if ( fwrite( $handle, base64_decode( $params[3]->bits ) ) === false ) {
-			$exception = new XMLRPCException(811);
+			$exception = new XMLRPCException( 811 );
 			$exception->output_fault_xml();
 	    }
 
@@ -338,7 +335,7 @@ class metaWeblog extends Plugin
 		$user = $this->is_auth( $params[1], $params[2] );
 
 		// Retrieve post to edit
-		$post = Post::get( array( 'id' => $params[0], 'status' => Post::status( 'any' ) ) );
+		$post = Post::get( array( 'id' => $params[0], 'status' => 'any' ) );
 
 		if ( !empty( $post ) ) { 
 			// Post exists, update it
@@ -348,7 +345,7 @@ class metaWeblog extends Plugin
 			$post->content_type = Post::type( 'entry' );
 			$post->status = ( $params[4] ) ? Post::status( 'published' ) : Post::status( 'draft' );
 			$post->updated = HabariDateTime::date_create();
-			if ( isset($params[3]->categories) ) { 
+			if ( isset( $params[3]->categories ) ) {
 				$post->tags = implode( ',', $params[3]->categories );
 			}
 			
