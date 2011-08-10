@@ -200,6 +200,9 @@ class metaWeblog extends Plugin
 		// Retrieve the posts
 		$posts = Posts::get( array( 'limit' => $params[3], 'status' => 'published' ) );
 
+		// Don't stay logged in
+		$user->forget( false );
+
 		return $this->add_posts( $posts );
 	}
 
