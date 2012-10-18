@@ -8,5 +8,6 @@
 	<url>http://habariproject.org/</url>
 	<description><![CDATA[Adds metaWeblog support to the XML-RPC server.]]></description>
 	<copyright>2007</copyright>
+	<guid>187ccc9e-2ae5-4dd6-bddb-4880e25ff0f4</guid>
 </pluggable>
- 
+
