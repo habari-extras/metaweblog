@@ -413,5 +413,22 @@ class metaWeblog extends Plugin
 		return $struct;
 	}
 	
+	/**
+	 * Register all the methods implemented and supported by this plugin
+	 */
+	public function filter_xmlrpc_methods( $res )
+	{
+		$res = array_merge( $res, array(
+			'metaWeblog.getRecentPosts',
+			'metaWeblog.getPost',
+			'metaWeblog.getCategories',
+			'metaWeblog.newPost',
+			'metaWeblog.newMediaObject',
+			'metaWeblog.editPost',
+			'blogger.deletePost',
+			'blogger.getUsersBlogs',
+			));
+		return $res;
+	}
 }
 ?>
